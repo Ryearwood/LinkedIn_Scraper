@@ -1,0 +1,1 @@
+## Repository for code to Scrape LinkedIn's Job Posting Page when not signed into an account.
