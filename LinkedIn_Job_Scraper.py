@@ -131,18 +131,20 @@ class JobPostings:
             job_dict["time_posted"] = None
         return job_dict
 
-    def generate_job_data_dict(self, scraped_data: BeautifulSoup) -> dict:
+    def generate_job_data_dict(self, scraped_data: BeautifulSoup, job_id: str) -> dict:
         """Creates structured dictionary containing job post data from scraped
         BeautifulSoup data object.
 
         Args:
             scraped_data (BeautifulSoup): BeautifulSoup data object housing raw scraped
                 data.
+            job_id (str): Job ID from the scraped web posting
 
         Returns:
             dict: Data Structure housing scraped job data - compiled
         """
         job_post_data = {}
+        job_post_data["Job_ID"] = job_id
         job_post_data = self.get_job_title_data(job_post_data, scraped_data)
         job_post_data = self.get_company_data(job_post_data, scraped_data)
         job_post_data = self.get_time_posted_data(job_post_data, scraped_data)
@@ -164,7 +166,7 @@ class JobPostings:
             job_post_url = f"{self.JOB_POST_URL}{_id}"
             response = requests.get(job_post_url)
             scraped_data = BeautifulSoup(response.text, "html.parser")
-            job_post_datadict = self.generate_job_data_dict(scraped_data)
+            job_post_datadict = self.generate_job_data_dict(scraped_data, _id)
             list_of_jobs.append(job_post_datadict)
         return list_of_jobs
 
@@ -190,15 +192,15 @@ def export_to_csv(dataframe: pd.DataFrame) -> None:
     Args:
         dataframe (pd.DataFrame): Dataframe containing scraped Linkedin Field Data.
     """
-    download_dir_path = ""
+    download_dir_path = "/Users/ryearwood/Downloads"
     filename = "Scraped_LinkedIn_Jobposts.csv"
     dataframe.to_csv(os.path.join(download_dir_path, filename), index=False, mode="a")
 
 
 if __name__ == "__main__":
 
-    job_title = "Python%2BDeveloper"
-    job_search_location = "Vancouver"
+    job_title = "Python%20Developer"
+    job_search_location = "Vancouver%2C%2BBritish%2BColumbia%2C%2BCanada"
     start_page = 0
 
     linkedin_scraper = JobPostings(job_title, job_search_location, start_page)
